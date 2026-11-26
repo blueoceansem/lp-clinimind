@@ -28,3 +28,8 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## Project rules
+- Leads are saved durably in the `leads` table via the `submitLead` server function (service role, idempotent on `submission_id`); browser never writes directly. Why: no lost or duplicated leads.
+- Analytics go only through `track()` in src/lib/tracking.ts into `window.dataLayer`; never push personal data (name, e-mail, phone). Why: privacy brief.
+- Ad attribution (UTMs, creative_id, entry point) is kept in sessionStorage via `captureAttribution`. Why: preserve origin across LP → quiz → platform.

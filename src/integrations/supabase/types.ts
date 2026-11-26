@@ -14,7 +14,84 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      leads: {
+        Row: {
+          created_at: string
+          creative_id: string | null
+          difficulty: string
+          email: string
+          entry_point: string
+          goal: string
+          id: string
+          marketing_consent: boolean
+          name: string
+          page_version: string | null
+          platform_trial_status: string
+          privacy_version: string
+          profile: string
+          quiz_attempt_id: string
+          recommendation_id: string
+          sheet_sync_status: string
+          submission_id: string
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          utm_term: string | null
+          whatsapp: string | null
+        }
+        Insert: {
+          created_at?: string
+          creative_id?: string | null
+          difficulty: string
+          email: string
+          entry_point: string
+          goal: string
+          id?: string
+          marketing_consent?: boolean
+          name: string
+          page_version?: string | null
+          platform_trial_status?: string
+          privacy_version: string
+          profile: string
+          quiz_attempt_id: string
+          recommendation_id: string
+          sheet_sync_status?: string
+          submission_id: string
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+          whatsapp?: string | null
+        }
+        Update: {
+          created_at?: string
+          creative_id?: string | null
+          difficulty?: string
+          email?: string
+          entry_point?: string
+          goal?: string
+          id?: string
+          marketing_consent?: boolean
+          name?: string
+          page_version?: string | null
+          platform_trial_status?: string
+          privacy_version?: string
+          profile?: string
+          quiz_attempt_id?: string
+          recommendation_id?: string
+          sheet_sync_status?: string
+          submission_id?: string
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
