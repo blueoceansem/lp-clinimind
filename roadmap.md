@@ -9,5 +9,5 @@
 - [x] Testar regras, fluxo completo mobile e eventos; remover dados de teste.
 - [ ] Confirmar URLs oficiais de cadastro e demonstração quando o usuário responder.
 
-- [ ] Enviar contatos, respostas, roteiro e atribuição completa dos anúncios à planilha, com horário de Brasília.
-- [ ] Testar entrega na planilha sem duplicação e manter reenvio seguro em caso de falha.
+- [x] Enviar contatos, respostas, roteiro e atribuição completa dos anúncios à planilha, com horário de Brasília.
+- [x] Testar entrega na planilha sem duplicação e manter reenvio seguro em caso de falha.
