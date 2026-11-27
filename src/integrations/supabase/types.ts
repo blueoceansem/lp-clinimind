@@ -14,12 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      lead_rate_limits: {
+        Row: {
+          attempts: number
+          rate_key: string
+          window_started_at: string
+        }
+        Insert: {
+          attempts?: number
+          rate_key: string
+          window_started_at?: string
+        }
+        Update: {
+          attempts?: number
+          rate_key?: string
+          window_started_at?: string
+        }
+        Relationships: []
+      }
       leads: {
         Row: {
+          contact_validation_version: string | null
           created_at: string
           creative_id: string | null
           difficulty: string
           email: string
+          email_domain_checked_at: string | null
+          email_verification_status: string
           entry_point: string
           goal: string
           id: string
@@ -39,12 +60,17 @@ export type Database = {
           utm_source: string | null
           utm_term: string | null
           whatsapp: string | null
+          whatsapp_country: string | null
+          whatsapp_verification_status: string | null
         }
         Insert: {
+          contact_validation_version?: string | null
           created_at?: string
           creative_id?: string | null
           difficulty: string
           email: string
+          email_domain_checked_at?: string | null
+          email_verification_status?: string
           entry_point: string
           goal: string
           id?: string
@@ -64,12 +90,17 @@ export type Database = {
           utm_source?: string | null
           utm_term?: string | null
           whatsapp?: string | null
+          whatsapp_country?: string | null
+          whatsapp_verification_status?: string | null
         }
         Update: {
+          contact_validation_version?: string | null
           created_at?: string
           creative_id?: string | null
           difficulty?: string
           email?: string
+          email_domain_checked_at?: string | null
+          email_verification_status?: string
           entry_point?: string
           goal?: string
           id?: string
@@ -89,6 +120,8 @@ export type Database = {
           utm_source?: string | null
           utm_term?: string | null
           whatsapp?: string | null
+          whatsapp_country?: string | null
+          whatsapp_verification_status?: string | null
         }
         Relationships: []
       }
@@ -97,7 +130,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      consume_lead_rate_limit: {
+        Args: { p_limit: number; p_rate_key: string; p_window_seconds: number }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never

@@ -8,6 +8,13 @@
       "when": 1795724781981,
       "tag": "0000_create_leads",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1795747947038,
+      "tag": "0001_add_contact_validation_and_rate_limits",
+      "breakpoints": true
     }
   ]
 }
