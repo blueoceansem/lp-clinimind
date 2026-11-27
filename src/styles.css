@@ -70,7 +70,7 @@
   --shadow-cta: 0 14px 30px -12px color-mix(in oklab, var(--primary) 60%, transparent);
 }
 
-/* Scoped dark application of the official brand palette; the landing page remains light. */
+/* Scoped dark application of the official brand palette; used by the landing page and the quiz. */
 .quiz-theme {
   --background: oklch(0.208 0.042 265.755); /* #0F172A — Tinta */
   --foreground: oklch(0.984 0.003 247.858); /* #F8FAFC — Névoa */

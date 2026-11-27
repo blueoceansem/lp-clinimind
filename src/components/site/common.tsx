@@ -2,13 +2,14 @@ import { useEffect, useRef, type ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import logo from "@/assets/clinimind-logo.png.asset.json";
+import negativeLogo from "@/assets/clinimind-logo-negative.png.asset.json";
 import { attributionSearch, track } from "@/lib/tracking";
 import { cn } from "@/lib/utils";
 
 export const PLATFORM_URL = "https://www.clinimind.net/dashboard";
 
-export function Logo({ className }: { className?: string | undefined }) {
-  return <img src={logo.url} alt="CliniMind" className={cn("h-10 w-auto", className)} />;
+export function Logo({ className, negative = false }: { className?: string | undefined; negative?: boolean }) {
+  return <img src={negative ? negativeLogo.url : logo.url} alt="CliniMind" className={cn("h-10 w-auto", className)} />;
 }
 
 export function Reveal({ children, className, delay = 0, as: Tag = "div" }: { children: ReactNode; className?: string | undefined; delay?: number; as?: "div" | "li" }) {

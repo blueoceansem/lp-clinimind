@@ -47,10 +47,10 @@ function Landing() {
   const endRef = useSectionView("fechamento");
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-background text-foreground">
+    <div className="quiz-theme min-h-screen overflow-x-hidden bg-background text-foreground">
       <header className="sticky top-0 z-40 border-b border-border/70 bg-background/80 backdrop-blur-md">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3">
-          <Logo className="h-11" />
+          <Logo negative className="h-11" />
           <Link to="/quiz" search={attributionSearch()} onClick={() => track("landing_cta_click", { cta_id: "cta_header", cta_position: "header" })}
             className="rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-cta transition hover:bg-primary/90">
             Teste grátis
@@ -201,7 +201,7 @@ function Landing() {
 
       <footer className="border-t border-border py-8">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-5 text-sm text-muted-foreground sm:flex-row">
-          <Logo className="h-9" />
+          <Logo negative className="h-9" />
           <Link to="/privacidade" className="hover:text-primary">Política de privacidade</Link>
         </div>
       </footer>

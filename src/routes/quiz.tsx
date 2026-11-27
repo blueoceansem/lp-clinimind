@@ -75,7 +75,7 @@ function QuizPage() {
       <div className="pointer-events-none absolute left-1/4 top-1/4 h-[500px] w-[500px] rounded-full bg-primary/15 blur-[120px]" />
       <div className="pointer-events-none absolute bottom-1/4 right-1/4 h-[400px] w-[400px] rounded-full bg-brand-green/10 blur-[100px]" />
       <header className="relative z-10 flex justify-center px-4 pt-4"><Link to="/" aria-label="Voltar para a página inicial"><img src={negativeLogo.url} alt="CliniMind AI" className="h-12 w-12" /></Link></header>
-      <main className={cn("relative z-10 mx-auto flex w-full flex-1 flex-col px-4", stage === "result" ? "max-w-2xl justify-start py-6" : "max-w-lg justify-center py-3")}>
+      <main className={cn("relative z-10 mx-auto flex w-full flex-1 flex-col px-4", stage === "result" ? "max-w-2xl justify-start py-6 lg:max-w-6xl" : "max-w-lg justify-center py-3")}>
         {typeof stage === "number" && <QuestionStep step={stage} answers={answers} onChoose={choose} onBack={back} />}
         {stage === "capture" && <Capture answers={answers as Required<Answers>} attemptId={attemptId} onBack={back} onSaved={(id) => { setLeadId(id); setStage("result"); }} />}
         {stage === "result" && <Result answers={answers as Required<Answers>} attemptId={attemptId} leadId={leadId} />}
@@ -315,6 +315,7 @@ function Result({ answers, attemptId, leadId }: { answers: Required<Answers>; at
 
   return (
     <div className={cn("animate-fade-up space-y-4", showSticky ? "pb-24 sm:pb-6" : "pb-6")}>
+      <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] lg:gap-6">
       <section className="rounded-3xl border border-border bg-card p-5 shadow-card sm:p-7" aria-labelledby="study-plan-title">
         <div className="flex flex-wrap items-center gap-2">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-green-soft px-3 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-brand-green"><Check className="h-3 w-3" />Identificação inicial</span>
@@ -342,7 +343,7 @@ function Result({ answers, attemptId, leadId }: { answers: Required<Answers>; at
         </ol>
       </section>
 
-      <div id="trial-offer" ref={offerRef} className="relative overflow-hidden rounded-3xl border border-primary/50 bg-card p-5 text-center shadow-card sm:p-7">
+      <div id="trial-offer" ref={offerRef} className="relative overflow-hidden rounded-3xl border border-primary/50 bg-card p-5 text-center shadow-card sm:p-7 lg:sticky lg:top-6">
         <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-primary/20 blur-3xl" />
         <div className="relative">
           <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-brand-green">20 créditos grátis</p>
@@ -357,6 +358,7 @@ function Result({ answers, attemptId, leadId }: { answers: Required<Answers>; at
             <MonitorPlay className="h-4 w-4 text-brand-green" />Veja a CliniMind funcionando
           </button>
         </div>
+      </div>
       </div>
 
       <p className="flex items-start justify-center gap-1.5 text-center text-[11px] leading-relaxed text-muted-foreground"><BookOpen className="mt-0.5 h-3.5 w-3.5 shrink-0" />Recomendação baseada nas suas respostas. O quiz não avalia seu conhecimento.</p>
