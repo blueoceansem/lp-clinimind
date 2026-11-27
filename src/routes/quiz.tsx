@@ -190,6 +190,7 @@ function Capture({ answers, attemptId, onBack, onSaved }: { answers: Required<An
         profile: answers.profile, goal: answers.goal, difficulty: answers.difficulty, recommendation_id: rec.id, quiz_attempt_id: attemptId,
         entry_point: a.entry_point ?? "quiz_direto", creative_id: a.creative_id, utm_source: a.utm_source, utm_medium: a.utm_medium,
         utm_campaign: a.utm_campaign, utm_content: a.utm_content, utm_term: a.utm_term, marketing_consent: form.consent,
+        ad_attribution: { campaign_name: a.campaign_name, adset_name: a.adset_name, ad_name: a.ad_name, campaign_id: a.campaign_id, adset_id: a.adset_id, ad_id: a.ad_id, placement: a.placement, source: a.source },
         privacy_version: PRIVACY_VERSION, page_version: PAGE_VERSION,
         form_elapsed_ms: Date.now() - mountedAt.current, website: form.website,
       } });

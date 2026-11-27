@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as QuizRouteImport } from './routes/quiz'
+import { Route as ApiPublicJobsSyncLeadsRouteImport } from './routes/api/public/jobs/sync-leads'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -28,35 +29,45 @@ const QuizRoute = QuizRouteImport.update({
   path: '/quiz',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicJobsSyncLeadsRoute = ApiPublicJobsSyncLeadsRouteImport.update({
+  id: '/api/public/jobs/sync-leads',
+  path: '/api/public/jobs/sync-leads',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/privacidade': typeof PrivacidadeRoute
   '/quiz': typeof QuizRoute
+  '/api/public/jobs/sync-leads': typeof ApiPublicJobsSyncLeadsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/privacidade': typeof PrivacidadeRoute
   '/quiz': typeof QuizRoute
+  '/api/public/jobs/sync-leads': typeof ApiPublicJobsSyncLeadsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/privacidade': typeof PrivacidadeRoute
   '/quiz': typeof QuizRoute
+  '/api/public/jobs/sync-leads': typeof ApiPublicJobsSyncLeadsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/privacidade' | '/quiz'
+  fullPaths: '/' | '/privacidade' | '/quiz' | '/api/public/jobs/sync-leads'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/privacidade' | '/quiz'
-  id: '__root__' | '/' | '/privacidade' | '/quiz'
+  to: '/' | '/privacidade' | '/quiz' | '/api/public/jobs/sync-leads'
+  id:
+    '__root__' | '/' | '/privacidade' | '/quiz' | '/api/public/jobs/sync-leads'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
   QuizRoute: typeof QuizRoute
+  ApiPublicJobsSyncLeadsRoute: typeof ApiPublicJobsSyncLeadsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -82,6 +93,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof QuizRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/jobs/sync-leads': {
+      id: '/api/public/jobs/sync-leads'
+      path: '/api/public/jobs/sync-leads'
+      fullPath: '/api/public/jobs/sync-leads'
+      preLoaderRoute: typeof ApiPublicJobsSyncLeadsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -89,6 +107,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   PrivacidadeRoute: PrivacidadeRoute,
   QuizRoute: QuizRoute,
+  ApiPublicJobsSyncLeadsRoute: ApiPublicJobsSyncLeadsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

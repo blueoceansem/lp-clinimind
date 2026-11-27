@@ -33,3 +33,5 @@ use the editor.
 - Leads are saved durably in the `leads` table via the `submitLead` server function (service role, idempotent on `submission_id`); browser never writes directly. Why: no lost or duplicated leads.
 - Analytics go only through `track()` in src/lib/tracking.ts into `window.dataLayer`; never push personal data (name, e-mail, phone). Why: privacy brief.
 - Ad attribution (UTMs, creative_id, entry point) is kept in sessionStorage via `captureAttribution`. Why: preserve origin across LP → quiz → platform.
+- Google Sheets delivery uses a permanently reserved row per lead and RAW writes, confirms the lead ID after writing, and marks synchronized only after confirmation. Why: uncertain retries must not duplicate leads or execute spreadsheet formulas.
+- Store ad attribution and the server-generated study-plan snapshot with each lead; retry pending deliveries hourly as reconciliation. Why: preserve the delivered recommendation and recover provider outages without blocking durable lead capture.

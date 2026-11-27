@@ -1,3 +1,4 @@
+import { AD_KEYS, type AdAttribution } from "@/lib/lead-sheet";
 // dataLayer + attribution helpers. Never push names, e-mails or phones here.
 declare global {
   interface Window { dataLayer?: Record<string, unknown>[] }
@@ -8,7 +9,7 @@ export const PRIVACY_VERSION = "2026-11-v1";
 const ATTR_KEY = "cm_attribution";
 const UTM_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"] as const;
 
-export type Attribution = {
+export type Attribution = AdAttribution & {
   utm_source?: string; utm_medium?: string; utm_campaign?: string; utm_content?: string; utm_term?: string;
   creative_id?: string; entry_point?: "quiz_direto" | "lp_primeiro";
 };
@@ -24,6 +25,11 @@ export function captureAttribution(entry: "quiz_direto" | "lp_primeiro"): Attrib
   const p = new URLSearchParams(window.location.search);
   const next: Attribution = { ...stored };
   for (const k of UTM_KEYS) { const v = p.get(k); if (v) next[k] = v.slice(0, 200); }
+  for (const key of AD_KEYS) {
+    const aliases: Record<string, string[]> = { adset_name: ["ad_set_name", "utm_adset"], adset_id: ["ad_set_id"], placement: ["ad_placement"], campaign_name: ["utm_campaign"], ad_name: ["utm_ad"] };
+    const value = p.get(key) || (aliases[key] ?? []).map(alias => p.get(alias)).find(Boolean);
+    if (value && !value.includes("{{")) next[key] = value.slice(0, 200);
+  }
   const cr = p.get("creative_id") || p.get("utm_id") || p.get("ad_id");
   if (cr) next.creative_id = cr.slice(0, 200);
   if (!next.entry_point) next.entry_point = entry;
@@ -40,7 +46,7 @@ export function getAttribution(): Attribution {
 export function attributionSearch(): Record<string, string> {
   const a = getAttribution();
   const out: Record<string, string> = {};
-  for (const k of UTM_KEYS) if (a[k]) out[k] = a[k]!;
+  for (const k of [...UTM_KEYS, ...AD_KEYS]) { const value = a[k]; if (value) out[k] = value; }
   if (a.creative_id) out["creative_id"] = a.creative_id;
   return out;
 }

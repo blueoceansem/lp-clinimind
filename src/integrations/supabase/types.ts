@@ -34,6 +34,7 @@ export type Database = {
       }
       leads: {
         Row: {
+          ad_attribution: Json
           contact_validation_version: string | null
           created_at: string
           creative_id: string | null
@@ -52,7 +53,11 @@ export type Database = {
           profile: string
           quiz_attempt_id: string
           recommendation_id: string
+          recommended_plan: string | null
+          sheet_last_error: string | null
+          sheet_row: number
           sheet_sync_status: string
+          sheet_synced_at: string | null
           submission_id: string
           utm_campaign: string | null
           utm_content: string | null
@@ -64,6 +69,7 @@ export type Database = {
           whatsapp_verification_status: string | null
         }
         Insert: {
+          ad_attribution?: Json
           contact_validation_version?: string | null
           created_at?: string
           creative_id?: string | null
@@ -82,7 +88,11 @@ export type Database = {
           profile: string
           quiz_attempt_id: string
           recommendation_id: string
+          recommended_plan?: string | null
+          sheet_last_error?: string | null
+          sheet_row?: number
           sheet_sync_status?: string
+          sheet_synced_at?: string | null
           submission_id: string
           utm_campaign?: string | null
           utm_content?: string | null
@@ -94,6 +104,7 @@ export type Database = {
           whatsapp_verification_status?: string | null
         }
         Update: {
+          ad_attribution?: Json
           contact_validation_version?: string | null
           created_at?: string
           creative_id?: string | null
@@ -112,7 +123,11 @@ export type Database = {
           profile?: string
           quiz_attempt_id?: string
           recommendation_id?: string
+          recommended_plan?: string | null
+          sheet_last_error?: string | null
+          sheet_row?: number
           sheet_sync_status?: string
+          sheet_synced_at?: string | null
           submission_id?: string
           utm_campaign?: string | null
           utm_content?: string | null

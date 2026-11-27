@@ -2,6 +2,8 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { validateEmail, validateWhatsApp } from "@/lib/contact-validation";
 
+import { serializePlan, AD_KEYS } from "@/lib/lead-sheet";
+
 const opt = z.string().trim().max(200).optional();
 const schema = z.object({
   submission_id: z.string().min(8).max(120),
@@ -16,6 +18,7 @@ const schema = z.object({
   quiz_attempt_id: z.string().max(120),
   entry_point: z.enum(["quiz_direto", "lp_primeiro"]),
   creative_id: opt, utm_source: opt, utm_medium: opt, utm_campaign: opt, utm_content: opt, utm_term: opt,
+  ad_attribution: z.object(Object.fromEntries(AD_KEYS.map(key => [key, opt]))).optional(),
   marketing_consent: z.boolean(),
   privacy_version: z.string().max(40),
   page_version: z.string().max(40),
@@ -87,6 +90,8 @@ export const submitLead = createServerFn({ method: "POST" })
 
     const n = (v: string | undefined) => v || null;
     const row = {
+      ad_attribution: data.ad_attribution ?? {},
+      recommended_plan: serializePlan({ profile: data.profile, goal: data.goal, difficulty: data.difficulty }),
       submission_id: data.submission_id,
       name: data.name,
       email: emailResult.email,
@@ -109,14 +114,16 @@ export const submitLead = createServerFn({ method: "POST" })
       page_version: data.page_version,
     };
     // Idempotent on submission_id: repeated sends never create duplicate rows.
-    const { data: saved, error } = await supabaseAdmin
+    const { error } = await supabaseAdmin
       .from("leads")
-      .upsert(row, { onConflict: "submission_id", ignoreDuplicates: false })
-      .select("id, sheet_sync_status")
-      .single();
-    if (error || !saved) {
+      .upsert(row, { onConflict: "submission_id", ignoreDuplicates: true })
+      ;
+    const { data: saved, error: readError } = await supabaseAdmin.from("leads").select("id, sheet_sync_status").eq("submission_id", data.submission_id).single();
+    if (error || readError || !saved) {
       console.error("lead save failed", error?.code);
       throw new Error("Não foi possível salvar agora. Tente novamente.");
     }
-    return { ok: true as const, lead_id: saved.id, sheet_sync_status: saved.sheet_sync_status };
+    const { syncLeadToSheet } = await import("@/lib/lead-sheet.server");
+    const synced = await syncLeadToSheet(saved.id);
+    return { ok: true as const, lead_id: saved.id, sheet_sync_status: synced ? "sincronizado" : saved.sheet_sync_status };
   });
