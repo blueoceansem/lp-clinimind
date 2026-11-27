@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { leadInputSchema } from "@/lib/leads.functions";
+import { QUESTIONS } from "@/lib/quiz";
 
 const base = {
   submission_id: "sub-test-0001",
@@ -21,8 +22,8 @@ const base = {
 };
 
 describe("lead form requires a WhatsApp number", () => {
-  it("accepts a complete submission with a WhatsApp number", () => {
-    expect(leadInputSchema.safeParse(base).success).toBe(true);
+  it.each([...QUESTIONS[0].options.map(({ id }) => id), "internato"])("accepts a complete submission for profile %s", (profile) => {
+    expect(leadInputSchema.safeParse({ ...base, profile }).success).toBe(true);
   });
 
   it("rejects a submission without the whatsapp field", () => {

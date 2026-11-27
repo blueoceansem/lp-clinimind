@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { validateEmail, validateWhatsApp } from "@/lib/contact-validation";
 
+import { QUESTIONS } from "@/lib/quiz";
 import { serializePlan, AD_KEYS } from "@/lib/lead-sheet";
 
 const opt = z.string().trim().max(200).optional();
@@ -11,7 +12,7 @@ export const leadInputSchema = z.object({
   email: z.string().trim().max(255),
   whatsapp: z.string().trim().min(1, "Informe seu WhatsApp.").max(30).regex(/^[0-9()+\-\s]*$/, "WhatsApp inválido"),
   whatsapp_country: z.enum(["BR", "PT", "US"]),
-  profile: z.enum(["vestibular", "estudante", "internato", "pre_residencia"]),
+  profile: z.enum([...QUESTIONS[0].options.map(({ id }) => id), "internato"]),
   goal: z.enum(["entender", "revisar", "questoes", "caso"]),
   difficulty: z.enum(["inicio", "tempo", "entender", "lembrar", "aplicar"]),
   recommendation_id: z.string().max(80),

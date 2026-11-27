@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, BookOpen, Check, Loader2, Info, MonitorPlay, Wrench } from "lucide-react";
 import { PLATFORM_URL } from "@/components/site/common";
 import negativeLogo from "@/assets/clinimind-logo-negative.png.asset.json";
-import { QUESTIONS, buildRecommendation, type Answers } from "@/lib/quiz";
+import { QUESTIONS, buildRecommendation, isOutsideTarget, type Answers } from "@/lib/quiz";
 import { submitLead } from "@/lib/leads.functions";
 import { COUNTRY_OPTIONS, formatWhatsApp, validateEmail, validateWhatsApp, type CountryCode } from "@/lib/contact-validation";
 import { PAGE_VERSION, PRIVACY_VERSION, captureAttribution, getAttribution, track, uid } from "@/lib/tracking";
@@ -57,7 +57,7 @@ function QuizPage() {
     const next = { ...answers, [q.id]: answerId } as Answers;
     setAnswers(next);
     track("quiz_answer", { quiz_attempt_id: attemptId, question_id: q.id, step_number: step + 1, answer_id: answerId, previous_answer_id: prev ?? null, button_id: `btn_${q.id}_${answerId}` });
-    if (q.id === "profile" && answerId === "vestibular") track("quiz_outside_target", { quiz_attempt_id: attemptId, answer_id: answerId });
+    if (q.id === "profile" && isOutsideTarget(answerId)) track("quiz_outside_target", { quiz_attempt_id: attemptId, answer_id: answerId });
     setTimeout(() => {
       if (step < 2) { track("quiz_auto_advance", { quiz_attempt_id: attemptId, from_step: step + 1, to_step: step + 2 }); setStage((step + 1) as Stage); }
       else { track("quiz_complete", { quiz_attempt_id: attemptId, profile: next.profile, goal: next.goal, difficulty: next.difficulty }); setStage("capture"); }

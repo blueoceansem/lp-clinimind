@@ -1,4 +1,4 @@
-export type ProfileId = "vestibular" | "estudante" | "internato" | "pre_residencia";
+export type ProfileId = (typeof QUESTIONS)[0]["options"][number]["id"] | "internato";
 export type GoalId = "entender" | "revisar" | "questoes" | "caso";
 export type DifficultyId = "inicio" | "tempo" | "entender" | "lembrar" | "aplicar";
 export type Answers = { profile?: ProfileId; goal?: GoalId; difficulty?: DifficultyId };
@@ -6,9 +6,11 @@ export type Answers = { profile?: ProfileId; goal?: GoalId; difficulty?: Difficu
 export const QUESTIONS = [
   { id: "profile", title: "Em que momento você está?", options: [
     { id: "vestibular", label: "Estou estudando para entrar em medicina." },
+    { id: "ingressante", label: "Vou começar a faculdade de medicina." },
     { id: "estudante", label: "Já estou cursando medicina." },
-    { id: "internato", label: "Estou no internato." },
-    { id: "pre_residencia", label: "Estou me preparando para a prova de residência." },
+    { id: "pre_residencia", label: "Estou prestando residência médica." },
+    { id: "formado", label: "Já sou formado em medicina." },
+    { id: "fora_area_medica", label: "Não pertenço à área médica." },
   ]},
   { id: "goal", title: "O que você precisa fazer agora?", options: [
     { id: "entender", label: "Entender melhor um conteúdo." },
@@ -38,12 +40,23 @@ const GOAL_CONTENT: Record<GoalId, { title: string; intro: string; feature: "que
 
 const GOAL_LABEL: Record<GoalId, string> = { entender: "entender melhor um conteúdo", revisar: "revisar para uma prova", questoes: "praticar questões", caso: "treinar seu raciocínio com casos clínicos" };
 const DIFF_LABEL: Record<DifficultyId, string> = { inicio: "não sabe por onde começar", tempo: "tem pouco tempo", entender: "tem dificuldade para entender alguns conteúdos", lembrar: "tem dificuldade para lembrar depois", aplicar: "tem dificuldade para aplicar a teoria nas questões ou nos casos" };
-const PROFILE_LABEL: Record<ProfileId, string> = { vestibular: "Como você está se preparando para entrar em medicina", estudante: "Como estudante de medicina", internato: "No internato", pre_residencia: "Na preparação para a residência" };
+const PROFILE_LABEL: Record<ProfileId, string> = {
+  vestibular: "Como você está se preparando para entrar em medicina",
+  ingressante: "Antes de começar a faculdade de medicina",
+  estudante: "Como estudante de medicina",
+  internato: "No internato",
+  pre_residencia: "Na preparação para a residência",
+  formado: "Com a formação em medicina concluída",
+  fora_area_medica: "Como você está fora da área médica",
+};
 const TOPIC: Record<ProfileId, string> = {
   vestibular: "um tema que você precisa revisar",
+  ingressante: "um conteúdo introdutório do curso de medicina",
   estudante: "um conteúdo da sua disciplina atual",
   internato: "um tema relacionado a uma situação que você encontrou no internato",
   pre_residencia: "um conteúdo prioritário para sua prova de residência",
+  formado: "um tema médico que você quer aprofundar",
+  fora_area_medica: "um tema introdutório que você quer estudar",
 };
 
 const TOOL_NAME: Record<ToolId, string> = {
@@ -103,9 +116,13 @@ function buildSteps(a: Required<Answers>): StudyStep[] {
   return plans[a.difficulty];
 }
 
+export function isOutsideTarget(profile: string) {
+  return profile === "vestibular" || profile === "fora_area_medica";
+}
+
 export function buildRecommendation(a: Required<Answers>) {
   const g = GOAL_CONTENT[a.goal];
   const id = `rec_${a.goal}_${a.difficulty}`;
   const context = `${PROFILE_LABEL[a.profile]}, você quer ${GOAL_LABEL[a.goal]} e informou que ${DIFF_LABEL[a.difficulty]}. ${g.intro}`;
-  return { id, title: g.title, context, steps: buildSteps(a), feature: g.feature, outsideTarget: a.profile === "vestibular" };
+  return { id, title: g.title, context, steps: buildSteps(a), feature: g.feature, outsideTarget: isOutsideTarget(a.profile) };
 }

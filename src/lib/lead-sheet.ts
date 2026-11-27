@@ -12,7 +12,11 @@ export function serializePlan(answers: Required<Answers>) {
   return [rec.title, rec.context, ...rec.steps.map((s, i) => `${i + 1}. ${s.title}\n${s.tool}: ${s.text}`)].join("\n\n");
 }
 export function serializeAnswers(answers: Required<Answers>) {
-  return QUESTIONS.map(q => `${q.title} ${q.options.find(o => o.id === answers[q.id])?.label ?? answers[q.id]}`).join("\n");
+  return QUESTIONS.map(q => {
+    const answer = answers[q.id];
+    const label = answer === "internato" ? "Estou no internato." : q.options.find(o => o.id === answer)?.label;
+    return `${q.title} ${label ?? answer}`;
+  }).join("\n");
 }
 export type SheetLead = Required<Answers> & {
   id: string; submission_id: string; created_at: string; name: string; email: string; whatsapp: string | null;

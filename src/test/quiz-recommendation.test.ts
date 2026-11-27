@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { buildRecommendation, QUESTIONS, type DifficultyId, type GoalId, type ProfileId } from "@/lib/quiz";
 
-const profiles: ProfileId[] = ["vestibular", "estudante", "internato", "pre_residencia"];
+const profiles: ProfileId[] = [...QUESTIONS[0].options.map(({ id }) => id), "internato"];
 const goals: GoalId[] = ["entender", "revisar", "questoes", "caso"];
 const difficulties: DifficultyId[] = ["inicio", "tempo", "entender", "lembrar", "aplicar"];
 
@@ -13,9 +13,11 @@ describe("personalized study plan", () => {
   it("returns exactly three tool-linked steps for every answer combination", () => {
     for (const profile of profiles) for (const goal of goals) for (const difficulty of difficulties) {
       const result = buildRecommendation({ profile, goal, difficulty });
+      expect(result.context).not.toContain("undefined");
       expect(result.steps).toHaveLength(3);
       for (const step of result.steps) {
         expect(step.tool_id).toBeTruthy();
+        expect(step.text).not.toContain("undefined");
         expect(step.text.length).toBeGreaterThan(60);
       }
     }
