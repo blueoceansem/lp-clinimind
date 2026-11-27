@@ -5,11 +5,11 @@ import { validateEmail, validateWhatsApp } from "@/lib/contact-validation";
 import { serializePlan, AD_KEYS } from "@/lib/lead-sheet";
 
 const opt = z.string().trim().max(200).optional();
-const schema = z.object({
+export const leadInputSchema = z.object({
   submission_id: z.string().min(8).max(120),
   name: z.string().trim().min(2, "Informe seu nome").max(100),
   email: z.string().trim().max(255),
-  whatsapp: z.string().trim().max(30).regex(/^[0-9()+\-\s]*$/, "WhatsApp inválido").optional(),
+  whatsapp: z.string().trim().min(1, "Informe seu WhatsApp.").max(30).regex(/^[0-9()+\-\s]*$/, "WhatsApp inválido"),
   whatsapp_country: z.enum(["BR", "PT", "US"]),
   profile: z.enum(["vestibular", "estudante", "internato", "pre_residencia"]),
   goal: z.enum(["entender", "revisar", "questoes", "caso"]),
@@ -25,7 +25,7 @@ const schema = z.object({
   form_elapsed_ms: z.number().int().min(0).max(3_600_000),
   website: z.string().max(200),
 });
-export type LeadInput = z.infer<typeof schema>;
+export type LeadInput = z.infer<typeof leadInputSchema>;
 type LeadResponse =
   | { ok: true; lead_id: string; sheet_sync_status: string }
   | { ok: false; field: "email" | "whatsapp"; message: string }
@@ -58,7 +58,7 @@ async function rateKey(email: string) {
 }
 
 export const submitLead = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => schema.parse(d))
+  .inputValidator((d: unknown) => leadInputSchema.parse(d))
   .handler(async ({ data }): Promise<LeadResponse> => {
     if (data.website || data.form_elapsed_ms < 1500) {
       return { ok: false as const, formError: "Não foi possível validar o envio. Aguarde um instante e tente novamente." };
@@ -66,8 +66,8 @@ export const submitLead = createServerFn({ method: "POST" })
 
     const emailResult = validateEmail(data.email);
     if (!emailResult.ok) return { ok: false as const, field: "email" as const, message: emailResult.message };
-    const phoneResult = data.whatsapp ? validateWhatsApp(data.whatsapp_country, data.whatsapp) : null;
-    if (phoneResult && !phoneResult.ok) return { ok: false as const, field: "whatsapp" as const, message: phoneResult.message };
+    const phoneResult = validateWhatsApp(data.whatsapp_country, data.whatsapp);
+    if (!phoneResult.ok) return { ok: false as const, field: "whatsapp" as const, message: phoneResult.message };
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const key = await rateKey(emailResult.email);
@@ -95,10 +95,10 @@ export const submitLead = createServerFn({ method: "POST" })
       submission_id: data.submission_id,
       name: data.name,
       email: emailResult.email,
-      whatsapp: phoneResult?.ok ? phoneResult.e164 : null,
-      whatsapp_country: phoneResult?.ok ? phoneResult.country : null,
+      whatsapp: phoneResult.e164,
+      whatsapp_country: phoneResult.country,
       email_verification_status: "unverified",
-      whatsapp_verification_status: phoneResult?.ok ? "unverified" : "not_provided",
+      whatsapp_verification_status: "unverified",
       email_domain_checked_at: new Date().toISOString(),
       contact_validation_version: "contacts-v2",
       profile: data.profile,

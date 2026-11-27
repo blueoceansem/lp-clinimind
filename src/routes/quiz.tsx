@@ -170,8 +170,9 @@ function Capture({ answers, attemptId, onBack, onSaved }: { answers: Required<An
     if (form.name.trim().length < 2) errs.name = "Informe seu nome.";
     const emailResult = validateEmail(form.email);
     if (!emailResult.ok) errs.email = emailResult.message;
-    const phoneResult = form.whatsapp ? validateWhatsApp(form.country, form.whatsapp) : null;
-    if (phoneResult && !phoneResult.ok) errs.whatsapp = phoneResult.message;
+    const phoneResult = form.whatsapp.trim() ? validateWhatsApp(form.country, form.whatsapp) : null;
+    if (!phoneResult) errs.whatsapp = "Informe seu WhatsApp.";
+    else if (!phoneResult.ok) errs.whatsapp = phoneResult.message;
     setErrors(errs);
     track("lead_submit", { quiz_attempt_id: attemptId, submission_id: submissionId });
     if (Object.keys(errs).length) {
@@ -185,7 +186,7 @@ function Capture({ answers, attemptId, onBack, onSaved }: { answers: Required<An
     const rec = buildRecommendation(answers);
     try {
       const res = await save({ data: {
-        submission_id: submissionId, name: form.name.trim(), email: form.email.trim(), whatsapp: form.whatsapp.trim() || undefined,
+        submission_id: submissionId, name: form.name.trim(), email: form.email.trim(), whatsapp: form.whatsapp.trim(),
         whatsapp_country: form.country,
         profile: answers.profile, goal: answers.goal, difficulty: answers.difficulty, recommendation_id: rec.id, quiz_attempt_id: attemptId,
         entry_point: a.entry_point ?? "quiz_direto", creative_id: a.creative_id, utm_source: a.utm_source, utm_medium: a.utm_medium,
@@ -222,13 +223,13 @@ function Capture({ answers, attemptId, onBack, onSaved }: { answers: Required<An
         <div><label htmlFor="name" className={label}>Nome</label><input id="name" autoComplete="name" maxLength={100} className={input} value={form.name} onChange={(e) => onField("name", e.target.value)} aria-invalid={!!errors.name} aria-describedby={errors.name ? "name-error" : undefined} />{errors.name && <p id="name-error" className="mt-1 text-xs text-destructive">{errors.name}</p>}</div>
         <div><label htmlFor="email" className={label}>E-mail</label><input id="email" type="email" inputMode="email" autoComplete="email" maxLength={255} className={input} value={form.email} onChange={(e) => onField("email", e.target.value)} onBlur={checkEmail} aria-invalid={!!errors.email} aria-describedby={errors.email ? "email-error" : undefined} />{errors.email && <p id="email-error" className="mt-1 text-xs text-destructive">{errors.email}</p>}</div>
         <div>
-          <label htmlFor="whatsapp" className={label}>WhatsApp — opcional</label>
+          <label htmlFor="whatsapp" className={label}>WhatsApp — obrigatório</label>
           <div className="flex gap-2">
             <label className="sr-only" htmlFor="country">Código do país</label>
             <select id="country" aria-label="Código do país" className="w-[118px] shrink-0 rounded-xl border border-border bg-background px-2 py-3 text-sm text-foreground focus:border-primary focus:outline-none" value={form.country} onChange={(e) => { const country = e.target.value as CountryCode; setForm((current) => ({ ...current, country, whatsapp: formatWhatsApp(country, current.whatsapp) })); }}>
               {COUNTRY_OPTIONS.map((country) => <option key={country.code} value={country.code}>{country.flag} +{country.ddi}</option>)}
             </select>
-            <input id="whatsapp" type="tel" inputMode="tel" autoComplete="tel-national" maxLength={20} placeholder={form.country === "BR" ? "(11) 99999-9999" : "Número com DDD"} className={input} value={form.whatsapp} onChange={(e) => onPhone(e.target.value)} aria-invalid={!!errors.whatsapp} aria-describedby={errors.whatsapp ? "whatsapp-error" : undefined} />
+            <input id="whatsapp" type="tel" inputMode="tel" autoComplete="tel-national" required aria-required="true" maxLength={20} placeholder={form.country === "BR" ? "(11) 99999-9999" : "Número com DDD"} className={input} value={form.whatsapp} onChange={(e) => onPhone(e.target.value)} aria-invalid={!!errors.whatsapp} aria-describedby={errors.whatsapp ? "whatsapp-error" : undefined} />
           </div>
           {errors.whatsapp && <p id="whatsapp-error" className="mt-1 text-xs text-destructive">{errors.whatsapp}</p>}
         </div>
